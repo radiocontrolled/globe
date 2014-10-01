@@ -1,0 +1,19 @@
+.water {
+  fill: #eff0f2;
+}
+
+.country {
+  fill:  #333; 
+  stroke: #FFF;
+  stroke-width: 0.7px;
+  transition: all 0.3s;
+}
+
+.country:hover {
+  fill:#413d25;
+  stroke-width: 1px;
+}
+
+.focused {
+  fill: #33CC33;
+}

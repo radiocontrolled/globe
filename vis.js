@@ -18,21 +18,33 @@ var projection = d3.geo.orthographic()
 	.clipAngle(90);
 
 var path = d3.geo.path()
-  .projection(projection);
+	.projection(projection);
   
-
+/* create a globe */
 globe.append("path")
-      .datum({type: "Sphere"})
-      .attr("class", "sphere")
-      .attr("d", path)
+	.datum({type: "Sphere"})
+	.attr("class", "water")
+	.attr("d", path);
 
 
-
-var graticule = d3.geo.graticule()
-
-groupPaths.append("path")
-	.datum(graticule)
-	.attr("class", "graticule")
-	.attr("d", path)
-
+/* load and display data */
+queue()
+	.defer(d3.json, "countries.json") /* topjson */
+	.await(countries);
   
+function countries(error, worldTopo){
+	var countriesData = topojson.feature(worldTopo, worldTopo.objects.countries).features;
+	
+	var world = globe.selectAll("path.land")
+		.data(countriesData)
+		.enter().append("path")
+		.attr("class", "country")
+		.attr("d", path);
+}
+
+
+d3.select(window).on('resize', resize);
+
+function resize() {
+	
+}
