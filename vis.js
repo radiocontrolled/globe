@@ -1,5 +1,5 @@
-var height = $(window).height() / .9999,
-	width = $(window).width() / .9999,
+var height = $(window).height() - 10,
+	width = $(window).width() - 10,
 	manualRotationActivated = false,
 	k = 0.25,
 	globe,
@@ -12,7 +12,7 @@ var setup = function(w,h) {
 		.append("svg")
 		.attr("id", "globe")
 		.style("width", w + 'px')
-		.style("height", h + 'px')
+		.style("height", h + 'px');
 		
 		
 	// define map projection
@@ -32,7 +32,7 @@ var setup = function(w,h) {
 		.attr("class", "water")
 		.attr("d", path);
 	
-}
+};
 
 setup(width,height);
 
@@ -52,17 +52,39 @@ function countries(error, worldTopo, nominees){
 		legend
 			.append("li")
 			.text(function(){
-				return nominees[name]["nominee"];
+				return nominees[name]["nominee"]; // don't make a functin in a loop!
 			})
 	}*/
 	
+	
+
+	
 	var countriesData = topojson.feature(worldTopo, worldTopo.objects.countries).features;
+		
+		
+	for(var i = 0, geo = countriesData; i < geo.length; i++){
+	
+		for(var x = 0; x < nominees.length; x++){
+			
+			if(nominees[x].country ==  geo[i].properties.name){
+				geo[i].properties.cls = "hasNominee";
+				
+			}
+		}
+	}
+			
 	
 	var world = globe.selectAll("path.land")
 		.data(countriesData)
 		.enter().append("path")
-		.attr("class", "country")
+		//.attr("class", "country")
+		.attr("class", function(d){
+			var cls = "country " + d.properties.cls;
+			return cls;
+		})
 		.attr("d", path);
+
+
 
 	world
 		.call(d3.behavior.drag()
@@ -78,12 +100,11 @@ function countries(error, worldTopo, nominees){
 d3.select(window).on('resize', resize);
 
 function resize(globe) {
-	height = $(window).height() * 0.9999;
-	width = $(window).width()* 0.9999;
-	
+	height = $(window).height() - 10;
+	width = $(window).width() - 10;
 	projection
 		.scale(width/5)
-		.translate([width/2, height/2]) // center the projection
+		.translate([width/2, height/2]); // center the projection
 	
 	path = d3.geo.path()
 		.projection(projection);
@@ -101,3 +122,4 @@ function resize(globe) {
 
 	
 }
+
